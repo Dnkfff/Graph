@@ -1,6 +1,5 @@
 ## Oratores, bellatores, laboratores 🧩
 
-Graph, to see first, press this button
+Graphs
 
 ## Disct math labs 🎭
-
