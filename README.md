@@ -1,6 +1,6 @@
-## Graph labs 🧩
+## Oratores, bellatores, laboratores 🧩
 
-Oratores, bellatores, laboratores
+Graph, to see first, press this button
 
-## To see labs, press this buttons 🎮
-Disct labs
+## Disct math labs 🎭
+
