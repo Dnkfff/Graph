@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph 1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: grey;
+            font-size: 16px;
+        }
+
+        canvas {
+            display: block;
+            float: left;
+            position: relative;
+        }
+
+        h1{
+            position: relative;
+            left: 20px
+        }
+
+        h3 {
+            margin-left: 10px;
+        }
+
+        p {
+            position: relative;
+            margin-left: 10px;
+        }
+
+        .or {
+            position: absolute;
+            left: 320px;
+        }
+
+        .nor {
+            position: absolute;
+            left: 1140px;
+            margin: auto;
+        }
+
+        
+        .canv {
+
+            position: absolute;
+            left: 500px;
+            z-index: 1;
+            border-radius: 20px;
+            background: white;
+            border: 1px solid black;
+            background-color: white;
+
+        }
+        
+        .instr {
+            display: block;
+            padding-top: 20px;
+            margin: 0 auto;
+            margin-top: 20px;
+            width: 500px;
+            height: 121%;
+            background:white;
+            text-align: center;
+            position: absolute;
+            top:800px;
+            left:650px;
+            border-radius: 20px;
+
+
+        }
+
+        #condensation {
+            top:20px;
+            background-color: whitesmoke;
+            border-radius: 15px;
+        }
+        
+    </style>
+
+</head>
+
+<body>
+
+
+
+<div class="wrapper">
+
+
+    <div class="instr"></div>
+    
+    <canvas id="canvas" class="canv">lol</canvas>
+    <h1>граф конденсації</h1>
+    <canvas id="condensation">lol</canvas>
+    </div>
+    <div class="canv">
+
+
+</div>  
+
+</body>
+
+<script>
+
+    'use strict';
+    
+
+    window.onload = function (matrix) {
+
+        const draw = (matrix) => {
+
+            let canvas = document.getElementById('canvas');
+            let ctx = canvas.getContext('2d');
+            canvas.width = 800;
+            canvas.height = 800;
+            ctx.font = '14px Tahoma';
+
+            const couple = [];
+            const points = [];
+
+            for (let i = 0; i < matrix.length; i++) {
+                for (let j = 0; j < 11; j++) {
+                    if (matrix[i][j] === 1) {
+                        couple.push([i + 1, j + 1]);
+                    }
+                }
+            }
+
+            // Вхідні і вихідні точки стрілок
+            let input = [];
+            let output = [];
+
+            const CIRCLE = (numsOfTops) => {
+                const centX = 425;
+                const centY = 425;
+                const bigCircle = 275;
+
+                const angle = 2 * Math.PI / (numsOfTops - 1);
+
+                let startAngle = Math.PI;
+                ctx.beginPath()
+                ctx.arc(centX, centY, 20, 0, Math.PI * 2);
+                ctx.fillText(1, centX - 3, centY + 2);
+                ctx.stroke();
+
+
+                for (let i = 0; i < numsOfTops; i++) {
+
+                    let centerXOfNewVertex = centX + (bigCircle * Math.sin(startAngle));
+                    let centerYOfNewVertex = centY + (bigCircle * Math.cos(startAngle));
+
+                    points.push([centerXOfNewVertex, centerYOfNewVertex]);
+
+                    output.push({
+                        right: [centerXOfNewVertex + 20, centerYOfNewVertex],
+                        left: [centerXOfNewVertex - 20, centerYOfNewVertex]
+                    });
+
+                    input.push({
+                        top: [centerXOfNewVertex, centerYOfNewVertex - 20],
+                        bottom: [centerXOfNewVertex, centerYOfNewVertex + 20]
+                    });
+
+                    ctx.beginPath();
+
+                    ctx.arc(centerXOfNewVertex, centerYOfNewVertex, 20, 0, Math.PI * 2);
+
+                    ctx.fillText(i + 1, centerXOfNewVertex - 4, centerYOfNewVertex + 2);
+
+                    ctx.stroke();
+                    ctx.closePath();
+
+                    startAngle -= angle;
+                }
+            };
+
+            CIRCLE(matrix.length);
+
+            //Визначаємо пари вершин які мають зв'язоk
+            for (let i = 0; i < matrix.length; i++) {
+                for (let j = 0; j < 11; j++) {
+                    if (matrix[i][j] === 1) {
+                        couple.push([i + 1, j + 1]);
+                    }
+                }
+            };
+
+            console.log(couple)
+
+
+            const arrows = (fromX, fromY, toX, toY) => {
+                const arrowSize = 8;
+                let dx = toX - fromX;
+                let dy = toY - fromY;
+                ctx.beginPath();
+                ctx.lineWidth = 1;
+                ctx.moveTo(fromX, fromY);
+                const angle = Math.atan2(dy, dx);
+
+                ctx.lineTo(toX, toY);
+                ctx.lineTo(
+                    toX - arrowSize * Math.cos(angle - Math.PI / 6),
+                    toY - arrowSize * Math.sin(angle - Math.PI / 6));
+                ctx.moveTo(toX, toY);
+                ctx.lineTo(
+                    toX - arrowSize * Math.cos(angle + Math.PI / 6),
+                    toY - arrowSize * Math.sin(angle + Math.PI / 6));
+                ctx.stroke();
+
+            }
+
+            // Циклом будуємо стрілки
+            for (let i = 0; i < couple.length; i++) {
+                let fromX;
+                let fromY;
+                let toX;
+                let toY;
+
+                if (couple[i][0] === couple[i][1]) {
+                    ctx.beginPath();
+                    ctx.arc(points[couple[i][0] - 1][0], points[couple[i][0] - 1][1] - 26, 7, 0, 2 * Math.PI)
+                    ctx.stroke();
+                } else if (points[couple[i][0] - 1][0] < points[couple[i][1] - 1][0]) {
+                    fromX = output[couple[i][0] - 1].right[0];
+                    fromY = output[couple[i][0] - 1].right[1];
+                    if (points[couple[i][0] - 1][1] < points[couple[i][1] - 1][1]) {
+                        toX = input[couple[i][1] - 1].top[0];
+                        toY = input[couple[i][1] - 1].top[1];
+                    } else {
+                        toX = input[couple[i][1] - 1].bottom[0];
+                        toY = input[couple[i][1] - 1].bottom[1];
+                    }
+                } else {
+                    fromX = output[couple[i][0] - 1].left[0];
+                    fromY = output[couple[i][0] - 1].left[1];
+                    if (points[couple[i][0] - 1][1] < points[couple[i][1] - 1][1]) {
+                        toX = input[couple[i][1] - 1].top[0];
+                        toY = input[couple[i][1] - 1].top[1];
+                    } else {
+                        toX = input[couple[i][1] - 1].bottom[0];
+                        toY = input[couple[i][1] - 1].bottom[1];
+                    }
+                }
+
+                arrows(fromX, fromY, toX, toY)
+
+            }
+
+            let d = {
+                exit1: 0,
+                exit2: 0,
+                exit3: 0,
+                exit4: 0,
+                exit5: 0,
+                exit6: 0,
+                exit7: 0,
+                exit8: 0,
+                exit9: 0,
+                exit10: 0,
+
+                enter1: 0,
+                enter2: 0,
+                enter3: 0,
+                enter4: 0,
+                enter5: 0,
+                enter6: 0,
+                enter7: 0,
+                enter8: 0,
+                enter9: 0,
+                enter10: 0,
+            };
+
+
+
+
+            for (let i = 0; i < 8; i++) {
+                for (let j = 1; j === 1; j++) {
+                    if (couple[i][j] === 1) {
+                        d.enter1 += 1;
+                    } else if (couple[i][j] === 2) {
+                        d.enter2 += 1;
+                    } else if (couple[i][j] === 3) {
+                        d.enter3 += 1;
+                    } else if (couple[i][j] === 4) {
+                        d.enter4 += 1;
+                    } else if (couple[i][j] === 5) {
+                        d.enter5 += 1;
+                    } else if (couple[i][j] === 6) {
+                        d.enter6 += 1;
+                    } else if (couple[i][j] === 7) {
+                        d.enter7 += 1;
+                    } else if (couple[i][j] === 8) {
+                        d.enter8 += 1;
+                    } else if (couple[i][j] === 9) {
+                        d.enter9 += 1;
+                    } else if (couple[i][j] === 10) {
+                        d.enter10 += 1;
+                    }
+                }
+
+            };
+
+            console.log(couple[0][0])
+
+            console.log(d)
+
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 1; j++) {
+                    if (couple[i][j] === 1) {
+                        d.exit1 += 1;
+                    } else if (couple[i][j] === 2) {
+                        d.exit2 += 1;
+                    } else if (couple[i][j] === 3) {
+                        d.exit3 += 1;
+                    } else if (couple[i][j] === 4) {
+                        d.exit4 += 1;
+                    } else if (couple[i][j] === 5) {
+                        d.exit5 += 1;
+                    } else if (couple[i][j] === 6) {
+                        d.exit6 += 1;
+                    } else if (couple[i][j] === 7) {
+                        d.exit7 += 1;
+                    } else if (couple[i][j] === 8) {
+                        d.exit8 += 1;
+                    } else if (couple[i][j] === 9) {
+                        d.exit9 += 1;
+                    } else if (couple[i][j] === 10) {
+                        d.exit10 += 1;
+                    }
+                }
+
+            };
+            console.log(matrix);
+
+
+            
+        }
+
+
+        // Вызываем и рисуем граф
+        draw([
+            
+            [0,    0,    0,    0,    0,    0,    0,    0,    0,    0],  
+            [0,    0,    0,    0,    0,    0,    0,    0,    0,    0],  
+            [0,    0,    0,    0,    1,    0,    0,    0,    0,    0],  
+            [0,    0,    0,    0,    0,    0,    0,    0,    0,    1],  
+            [0,    0,    0,    1,    0,    0,    0,    0,    0,    1],  
+            [0,    0,    1,    0,    0,    0,    0,    0,    0,    0],  
+            [0,    0,    0,    0,    0,    0,    0,    1,    0,    0],  
+            [0,    1,    1,    0,    1,    1,    1,    1,    0,    0],  
+            [0,    0,    0,    0,    0,    0,    0,    0,    1,    0], 
+            [0,    0,    0,    0,    0,    0,    0,    0,    1,    0],    
+        ]);
+
+
+        const lab3 = (matrix) => {
+            
+                    
+        let instr = document.querySelector(".instr");
+        let MatrixInc = {};
+        let degT = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let degF = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        
+        instr.innerHTML += "<p style='font-weight: bold;'>1) Матриця суміжності</p>"
+            for ( let i = 0 ; i < matrix.length; i++) {
+            for ( let j = 0 ; j < matrix.length; j++) {
+                if ( i ===j && matrix[i][j]===1 ) matrix[i][j] = 2;
+            }
+        }
+
+        for ( let i = 0 ; i < matrix.length; i++) {
+            for ( let j = 0; j < matrix.length; j++) {
+                instr.innerHTML += " " + matrix[i][j] + "  ";
+            }
+            instr.innerHTML += "<br>";
+        }
+
+        instr.innerHTML += "<p style='font-weight: bold;'>2) Напівстепені вершин</p>"
+         for ( let i = 0; i < matrix.length; i++){
+            for ( let j = 0; j < matrix.length; j++) {
+                if ( matrix[i][j] === 1 ) {
+                    MatrixInc[`${i+1}${j+1}`] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    if ( i !== j ) {
+                    MatrixInc[`${i+1}${j+1}`][i] += 1;  MatrixInc[`${i+1}${j+1}`][j] += -1;  
+                    }
+                    else {
+                        MatrixInc[`${i+1}${j+1}`][i] +=2;
+                    }
+                }
+            }
+        }
+        for ( let key in MatrixInc) {
+            for ( let i = 0; i < MatrixInc[`${key}`].length ; i++) {
+                if (MatrixInc[`${key}`][i] === 1 || MatrixInc[`${key}`][i] === 2 ) { degT[i]++; }
+                if (MatrixInc[`${key}`][i] === -1 || MatrixInc[`${key}`][i] === 2) { degF[i]++;}
+            }
+        }
+
+
+        for ( let i = 0; i < degT.length; i++) {
+            instr.innerHTML += `<span >d(${i+1}+) === ${degT[i]}, d(${i+1}-) === ${degF[i]} </span>` + '<br>';
+
+        }
+        function matrixSum_ (matrix1, matrix2) {
+                let result = [];
+                for (let i = 0 ; i < matrix1.length; i++) {
+                    result[i]=[];
+                }
+                for ( let i = 0 ; i < matrix1.length; i ++) {
+                    for ( let j = 0; j < matrix1.length; j++) {
+                        result[i][j] = matrix1[i][j] + matrix2[i][j];
+                    }
+                }
+                return result;
+            }
+
+            function multiplyMatrix(m1, m2) {
+                let result = [];
+                for ( let i = 0; i < m1.length; i++) {
+                    result[i] = [];
+                }
+                for ( let i = 0 ; i < m1.length; i++) {
+                    for (let j = 0 ; j < m2.length; j++ ) {
+                        result[i][j] = 0;
+                        for (let k = 0; k < m1.length; k++) {
+                            result[i][j] += m1[i][k]*m2[k][j];
+                        }
+                    }
+                }
+                return result;
+            }
+
+            function multiplyMatrixByElem (m1, m2) {
+                let result = [];
+                for (let i = 0; i < m1.length; i++) {
+                    result[i] = [];
+                    for (let j = 0 ; j< m1.length; j++ ) {
+                        result[i][j] = m1[i][j]*m2[i][j];
+                    }
+                }
+                return result;
+            }
+
+
+            function matrixTransplon(matrix) {
+                let result = [];
+                for (let i = 0 ; i < matrix.length; i++) {
+                    result[i] = [];
+                    for (let j = 0 ; j < matrix.length; j++) {
+                        result[i][j] = 0;
+                    }
+                }
+                for (let i = 0; i < matrix.length; i++) {
+                    for (let j = 0 ; j < matrix.length; j++) {
+                    result[i][j] = matrix[j][i];
+                    }
+                }
+                return result;
+            }
+
+
+            function searchWaysInGraph2(matrix1, matrix2) {
+                let start = 0;
+                let end = 0;
+                let middle = [];
+                let result = [];
+                for ( let i = 0 ; i < matrix2.length; i++ ) {
+
+
+                    for ( let j = 0 ; j < matrix2.length; j++) {
+                        if ( matrix2[i][j] > 0)
+                        {
+                            start = i; end = j; middle = [];
+
+                            for (let g = 0; g < matrix1.length; g++) {
+                                    if ( matrix1[g][end] === 1 && matrix1[start][g] === 1) {
+                                        middle.push(g);
+                                    }
+                                }
+                                for (let l = 0 ; l < middle.length; l++ ) {
+                                    result.push((start+1) + "-" + (middle[l]+1) + "-" + (end+1));
+                                }
+                            
+                            }
+                    }
+                }
+                return result;
+            }
+
+            function searchWaysInGraph3(matrix1, matrix3) {
+                    let start = 0, end = 0, middle1 = [], middle2 = [], result_=[];
+                    for ( let i = 0 ; i < matrix3.length; i++ ) {
+
+                    for ( let j = 0 ; j < matrix3.length; j++) {
+                        if ( matrix3[i][j] > 0){
+                            start = i; end = j; middle1 = []; middle2 = [];
+
+
+                            for ( let h = 0 ; h < matrix1.length; h++) {
+                                if ( matrix1[start][h] === 1) middle1.push(h);
+                                if ( matrix[h][end] === 1) middle2.push(h);
+                            }
+                            for ( let y = 0; y < middle1.length; y++) {
+                                for (let q = 0; q < middle2.length; q++) {
+                                    if ( matrix1[middle1[y]][middle2[q]] === 1) {
+                                        result_.push((start+1) + "-" + (middle1[y]+1)+ "-" + (middle2[q]+1) + "-" + (end+1));
+                                    }
+                                }
+                            }
+                        
+                        }
+                    }
+                }
+                return result_;
+            }
+
+            function matrixDos(matrix1) {
+                let result = [];
+                for ( let i = 0 ; i < matrix1.length; i++) {
+                    result[i] = [];
+                }
+                for ( let i = 0; i < matrix1.length; i++) {
+                    for ( let j = 0; j < matrix1.length ; j++) {
+                        if ( i === j) {
+                            result[i][j] = 1;
+                        }
+                        else result[i][j]=0;
+                    }
+                }
+                result = matrixSum_(result, matrix1);
+                let mat1 = [];
+                for (let i = 0 ; i < matrix1.length; i++) {
+                    mat1[i] = matrix1[i].slice(0);
+                }
+            for ( let i = 0; i < (matrix1.length-2); i++) {
+                matrix1 = multiplyMatrix(matrix1, mat1);
+                result = matrixSum_(result, matrix1);
+            }
+            for (let i = 0 ; i < matrix1.length; i++) {
+                for (let j = 0 ; j < matrix1.length; j++) {
+                    if (result[i][j] !==0 ) { result[i][j] = 1; }
+                }
+            }
+                return result;
+        }
+
+
+        let matrix1 = [];
+            for ( let i = 0 ; i < matrix.length; i++) {
+            matrix1[i] = matrix[i].slice(0);
+            }
+            for ( let i = 0 ; i < matrix1.length; i++) {
+                for ( let j = 0; j < matrix1.length; j++) {
+                    if ( i === j) matrix1[i][j] = 0;
+                }
+            }
+            let matrix2 = multiplyMatrix(matrix1, matrix1), 
+            matrix3 = multiplyMatrix(matrix2, matrix1), 
+            ways2 = searchWaysInGraph2(matrix1, matrix2),
+            ways3 = searchWaysInGraph3(matrix1, matrix3);
+            instr.innerHTML += "<p style='font-weight: bold;'>3) Шляхи довжиною 2 ребра</p>";
+        for ( let i = 0 ; i < ways2.length; i++) {
+            instr.innerHTML += ways2[i] + ". ";
+        }
+            instr.innerHTML += "<p style='font-weight: bold;'>Шляхи довжиною 3 ребра</p>";
+
+            for ( let i = 0; i < ways3.length; i++) {
+                instr.innerHTML += ways3[i] + ". ";
+            }
+
+        instr.innerHTML += "<p style='font-weight: bold;'>4) Матриця досяжності</p>";
+        let matrixDosOfGraph = matrixDos(matrix1);
+        for ( let i = 0 ; i < matrixDosOfGraph.length; i++) {
+            for ( let j = 0 ; j < matrixDosOfGraph.length; j++) {
+                instr.innerHTML += " " + matrixDosOfGraph[i][j] + "  ";
+            }
+            instr.innerHTML += "<br>";
+        }
+
+        instr.innerHTML += "<p style='font-weight: bold;'>5) Матриця сильної зв'язності</p>";
+                let matrixSilZvaz = multiplyMatrixByElem(matrixDosOfGraph, matrixTransplon(matrixDosOfGraph));
+                for ( let i = 0 ; i < matrixSilZvaz.length; i++) {
+                    for ( let j = 0 ; j < matrixSilZvaz.length; j++) {
+                        instr.innerHTML += " " + matrixSilZvaz[i][j] + "  ";
+                    }
+                    instr.innerHTML += "<br>";
+                }
+
+                let arr = [];
+                let count = 0;
+                for (let i = 0 ; i < matrixSilZvaz.length; i++) {
+                    count = 0;
+                    for (let j = 0 ; j < arr.length; j++) 
+                    {
+                        if ( matrixSilZvaz[arr[j][0]-1].toString() === matrixSilZvaz[i].toString() ) {arr[j].push(i+1);count++; break}
+                    }
+                    if (count == 0) {
+                        arr.push([i+1]);
+                    }
+                    }
+                instr.innerHTML += "<p style='font-weight: bold;'>6) Компоненти сильної зв'язності</p>";
+                for (let i = 0 ; i < arr.length; i++) {
+                        instr.innerHTML += `${i+1} компонента зв'язності : ${[...arr[i]]}`;
+                        instr.innerHTML += "<br>";
+                    }
+
+                    let mC = [];
+                    for (let i = 0 ; i < arr.length; i++) {
+                        mC[i] = [];
+                        for (let j = 0 ; j < arr.length; j++) {
+                            mC[i][j] = 0;
+                        }
+                    }
+                    console.log(arr);
+
+                for (let i = 0; i < arr.length; i++) {
+                        for (let j = 0; j < arr.length; j++) {
+                            if (i === j) continue;
+                            for (let k = 0; k < arr[i].length; k++) {
+                                for (let m = 0; m < arr[j].length; m++) {
+                                    if (matrix1[arr[i][k]-1][arr[j][m]-1] === 1) {
+                                        mC[i][j] = 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return mC;
+
+                console.log(MatrixInc);
+                console.log(stepeniDod);
+                console.log(stepeniVid);
+                console.log(searchWaysInGraph2(matrix1, matrix2));
+                console.log(searchWaysInGraph3(matrix1, matrix3));
+
+
+
+
+
+
+
+    }
+
+        const drawCondencationGraph = () => {
+                let matrix = lab3([             
+            [0,    0,    0,    0,    0,    0,    0,    0,    0,    0],  
+            [0,    0,    0,    0,    0,    0,    0,    0,    0,    0],  
+            [0,    0,    0,    0,    1,    0,    0,    0,    0,    0],  
+            [0,    0,    0,    0,    0,    0,    0,    0,    0,    1],  
+            [0,    0,    0,    1,    0,    0,    0,    0,    0,    1],  
+            [0,    0,    1,    0,    0,    0,    0,    0,    0,    0],  
+            [0,    0,    0,    0,    0,    0,    0,    1,    0,    0],  
+            [0,    1,    1,    0,    1,    1,    1,    1,    0,    0],  
+            [0,    0,    0,    0,    0,    0,    0,    0,    1,    0], 
+            [0,    0,    0,    0,    0,    0,    0,    0,    1,    0],  
+                ]);
+                console.log(matrix);
+                    var canvas = document.getElementById('condensation');
+                    canvas.width = 400;
+                    canvas.height = 300;
+                    if (canvas.getContext) {
+                    var ctx = canvas.getContext('2d');
+                    ctx.font = '8px Tahoma';
+                    let center = [200,140];
+
+                    let point = [], r = 75, alfa = (2*Math.PI)/matrix.length,
+                    startAngle = Math.PI;
+                    for ( let i = 0 ; i < matrix.length; i++) {
+                        point.push([center[0] + (r*Math.sin(startAngle)), center[1] + (r*Math.cos(startAngle))]);
+                        startAngle -= alfa;
+                }
+
+                console.log(point);
+
+                var couple = [];
+
+                function canvas_arrow(fromX, fromY, toX, toY) {
+                    
+                    const arrowSize = 8;
+                    let dx = toX - fromX;
+                    let dy = toY - fromY;
+                    ctx.beginPath();
+                    ctx.lineWidth = 1;
+                    ctx.moveTo(fromX, fromY);
+                    let angle = Math.atan2(dy, dx);
+                    let l = 0, j = 0, k = 0, h = 0;
+
+                    if ( fromY === toY && fromY === topLeft[1] - 15 &&  toX !== fromX ) {
+                    ctx.lineTo(fromX, fromY - 10 - fromX / 20);
+                    ctx.lineTo(toX, toY - 10 - fromX / 20);
+                    angle = Math.atan2(20, 0);
+                    l++;
+                    }
+                    else if ( fromY === toY && fromY === bottomLeft[1] + 15 &&  toX !== fromX  ) {
+                    ctx.lineTo(fromX, fromY + 20 + fromX /30);
+                    ctx.lineTo(toX, toY + 20 + fromX /30);
+                    angle = Math.atan2(-20, 0);
+                    j++;
+                    }
+                    else if ( fromX === toX && fromX === topLeft[0] - 15 &&  toY !== fromY) {
+                    ctx.lineTo(fromX - 20 - fromY / 20 , fromY);
+                    ctx.lineTo(toX -20 - fromY / 20, toY);
+                    angle = Math.atan2(0, 20);
+                    k++;
+                    }
+                    else if ( fromX === toX && fromX === topRight[0] + 15 &&  toY !== fromY ) {
+                    ctx.lineTo(fromX + 20 + fromY / 20 , fromY);
+                    ctx.lineTo(toX  + 20 + fromY / 20 , toY);
+                    angle = Math.atan2(0, -20);
+                    h++;
+                    }
+
+                        ctx.lineTo(toX, toY);
+                    ctx.lineTo(
+                        toX - arrowSize * Math.cos(angle - Math.PI / 6),
+                        toY - arrowSize * Math.sin(angle - Math.PI / 6));
+                    ctx.moveTo(toX, toY);
+                    ctx.lineTo(
+                        toX - arrowSize * Math.cos(angle + Math.PI / 6),
+                        toY - arrowSize * Math.sin(angle + Math.PI / 6));
+                    ctx.stroke();
+                }
+
+
+                for ( let i = 0; i < matrix.length; i++) {
+                    for ( let j = 0; j < matrix.length; j++) {
+                        if ( matrix[i][j] === 1 ) {
+                            couple.push([i+1, j+1]);
+                        } 
+                    }
+                }
+                console.log(couple);
+
+                function drawCircle(i) {
+                    ctx.beginPath();
+                    ctx.arc(point[i][0], point[i][1], 15, 0, Math.PI*2, true);
+                    ctx.closePath();
+                    if (i < 9) {
+                    ctx.fillText(`${i+1}`, point[i][0]-2, point[i][1]+3);
+                    }
+                    else {
+                        ctx.fillText(`${i+1}`, point[i][0]-4, point[i][1]+3);
+                    }
+                    if (i !== point.length - 1) {
+                    ctx.moveTo(point[i+1][0]+15, point[i+1][1]);
+                    }
+                    ctx.stroke();
+                }
+                let output = [];
+
+                let input = [];
+                for ( let i = 0; i < matrix.length; i++) {
+                    output[i] = {
+                        right : [ point[i][0]+15, point[i][1] ],
+                        left : [ point[i][0]-15, point[i][1] ]
+                    };
+                    input[i] = {
+                        top : [ point[i][0], point[i][1] - 15],
+                        bottom : [ point[i][0], point[i][1] + 15]
+                    };
+                }
+
+
+
+                    for ( let i = 0; i < couple.length; i++ ) {
+                        let fromX;
+                        let fromY;
+                        let toX;
+                        let toY;
+
+
+                        if (couple[i][0] === couple[i][1]) {
+                            ctx.beginPath();
+                            ctx.arc(point[couple[i][0] - 1][0], point[couple[i][0] - 1][1] - 22, 7, 0, 2*Math.PI)
+                            ctx.stroke();
+                        }
+
+                            
+                    
+                        if (point[couple[i][0] - 1][0] < point[couple[i][1] - 1][0]) {
+                        fromX = output[couple[i][0]-1].right[0];
+                        fromY = output[couple[i][0]-1].right[1];
+                            if (point[couple[i][0] - 1][1] < point[couple[i][1] - 1][1]) {
+                            toX = input[couple[i][1]-1].top[0]; 
+                            toY = input[couple[i][1]-1].top[1];
+                            } else {
+                                toX = input[couple[i][1]-1].bottom[0];
+                                toY = input[couple[i][1]-1].bottom[1];
+                            }
+                        } else {
+                            fromX = output[couple[i][0]-1].left[0]; 
+                            fromY = output[couple[i][0]-1].left[1];
+                            if (point[couple[i][0] - 1][1] < point[couple[i][1] - 1][1]) {
+                                toX = input[couple[i][1]-1].top[0]; 
+                                toY = input[couple[i][1]-1].top[1];
+                            } else {
+                                toX = input[couple[i][1]-1].bottom[0];
+                                toY = input[couple[i][1]-1].bottom[1];
+                            }
+                        }
+                    canvas_arrow(fromX, fromY, toX, toY);
+                    }
+                    for (let i = 0; i < point.length; i++) {
+                        drawCircle(i)
+                    }
+                    }
+    }
+
+        drawCondencationGraph();
+
+
+
+
+        
+}
+
+</script>
+
+</html>
