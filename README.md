@@ -1,5 +1,5 @@
 ## Oratores, bellatores, laboratores 🧩
 
-Graphs
+3 types of Graphs  
 
 ## Disct math labs 🎭
