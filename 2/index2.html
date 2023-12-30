@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph 1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: grey;
+            font-size: 16px;
+        }
+
+        canvas {
+            display: block;
+            float: left;
+            position: relative;
+        }
+
+        h1 {
+            position: absolute;
+            margin: auto;
+            left: 1100px;
+
+        }
+
+        h3 {
+            margin-left: 10px;
+        }
+
+        p {
+            position: relative;
+            margin-left: 10px;
+        }
+
+        .or {
+            position: absolute;
+            left: 320px;
+        }
+
+        .nor {
+            position: absolute;
+            left: 1140px;
+            margin: auto;
+        }
+
+        .canv {
+            display: block;
+            float: left;
+        }
+
+        .info {
+            background-color: white;
+            position: absolute;
+            width: 250px;
+            height: 115px;
+            top: 500px;
+            left: 700px;
+            border-radius: 15px;
+        }
+
+        .info2 {
+            background-color: white;
+            position: absolute;
+            width: 200px;
+            height: 180px;
+            top: 730px;
+            left: 305px;
+            border-radius: 15px;
+        }
+
+        .info3 {
+            background-color: white;
+            position: absolute;
+            width: 200px;
+            height: 180px;
+            top: 730px;
+            left: 1110px;
+            border-radius: 15px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1 class=" or"> Напрямлений граф </h1>
+
+    <div class="info">
+
+        <h3>Граф не є однорідним </h3>
+        <h3>У графі є одна ізольована вершина = 1 </h3>
+        <h3>У графі є 6 висячих вершин = 9, 10, 2, 4, 6, 7 </h3>
+    </div>
+
+    <div class="info2">
+        <p> d+(1)=<span id="countt1"></span> d-(1)=<span id="counter1"></span> </p>
+        <p> d+(2)=<span id="countt2"></span> d-(2)=<span id="counter2"></span> </p>
+        <p> d+(3)=<span id="countt3"></span> d-(3)=<span id="counter3"></span> </p>
+        <p> d+(4)=<span id="countt4"></span> d-(4)=<span id="counter4"></span> </p>
+        <p> d+(5)=<span id="countt5"></span> d-(5)=<span id="counter5"></span> </p>
+        <p> d+(6)=<span id="countt6"></span> d-(6)=<span id="counter6"></span> </p>
+        <p> d+(7)=<span id="countt7"></span> d-(7)=<span id="counter7"></span> </p>
+        <p> d+(8)=<span id="countt8"></span> d-(8)=<span id="counter8"></span> </p>
+        <p> d+(9)=<span id="countt9"></span> d-(9)=<span id="counter9"></span> </p>
+        <p> d+(10)=<span id="countt10"></span> d-(10)=<span id="counter10"></span> </p>
+    </div>
+
+    <div class="info3">
+        <p> d(1) = <span id="count1"></span> </p>
+        <p> d(2) = <span id="count2"></span></p>
+        <p> d(3) = <span id="count3"></span></p>
+        <p> d(4) = <span id="count4"></span></p>
+        <p> d(5) = <span id="count5"></span></p>
+        <p> d(6) = <span id="count6"></span></p>
+        <p> d(7) = <span id="count7"></span></p>
+        <p> d(8) = <span id="count8"></span></p>
+        <p> d(9) = <span id="count9"></span></p>
+        <p> d(10) = <span id="count10"></span></p>
+    </div>
+
+    <canvas id="canvas">
+        lol
+    </canvas>
+
+    <canvas id="canv1" class="canv">
+        <h1>lolol</h1>
+        lol
+    </canvas>
+
+    <div class="canv">
+        <h1 class=" nor"> Ненапрямлений граф </h1>
+    </div>
+
+</body>
+
+<script src="js/main.js"></script>
+
+</html>
